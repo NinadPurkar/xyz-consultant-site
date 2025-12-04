@@ -1,9 +1,15 @@
+# Stage 1: Build the JAR
+FROM eclipse-temurin:17-jdk-alpine as builder
+
+WORKDIR /app
+COPY . .
+RUN ./mvnw clean package -DskipTests
+
+# Stage 2: Run the app
 FROM eclipse-temurin:17-jdk-alpine
 
 WORKDIR /app
-
-COPY target/ninad-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=builder /app/target/ninad-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
-
 ENTRYPOINT ["java", "-jar", "app.jar"]
